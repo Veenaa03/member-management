@@ -11,6 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 
 @Configuration
 @EnableMethodSecurity
@@ -19,7 +22,7 @@ public class SecurityConfig {
     private final UserService userService;
     private final JwtFilter jwtFilter;
 
-    public SecurityConfig(UserService userService, JwtService jwtService){
+    public SecurityConfig(UserService userService, JwtService jwtService) {
         this.userService = userService;
         this.jwtFilter = new JwtFilter(jwtService, userService);
     }
@@ -45,8 +48,5 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+
     }
-}
