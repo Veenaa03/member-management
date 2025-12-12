@@ -1,0 +1,294 @@
+{
+	"info": {
+		"_postman_id": "ddf2c275-80a9-43ef-8864-da95c0924d87",
+		"name": "Member-Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50674124",
+		"_collection_link": "https://veena-neelappa-3734670.postman.co/workspace/Veenaa-N's-Workspace~4f20d28a-725e-4047-8674-901fe0811a44/collection/50674124-ddf2c275-80a9-43ef-8864-da95c0924d87?action=share&source=collection_link&creator=50674124"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Created 201\", () => pm.expect(pm.response.code).to.eql(201));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Alice\",\r\n  \"lastName\": \"Smith\",\r\n  \"dateOfBirth\": \"1980-05-01\",\r\n  \"email\": \"alice.smith@example.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/members",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth-login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"",
+							"// parse json and store token in environment variable",
+							"try {",
+							"    var json = pm.response.json();",
+							"    if (json.token) {",
+							"        pm.environment.set(\"jwt_token\", json.token);",
+							"        pm.test(\"JWT token saved\", function () {",
+							"            pm.expect(pm.environment.get(\"jwt_token\")).to.not.be.undefined;",
+							"        });",
+							"    } else {",
+							"        pm.test(\"Response contains token\", function () {",
+							"            pm.expect.fail(\"No token field in response\");",
+							"        });",
+							"    }",
+							"} catch (e) {",
+							"    pm.test(\"Response is JSON\", function () {",
+							"        pm.expect.fail(\"Response not JSON: \" + e.message);",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "Members-List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.expect(pm.response.code).to.eql(200));\r",
+							"pm.test(\"Has content\", () => {\r",
+							"    var json = pm.response.json();\r",
+							"    pm.expect(json).to.have.property(\"content\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/members?page=0&size=10&sort=lastName,asc&firstName=Ali",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"members"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sort",
+							"value": "lastName,asc"
+						},
+						{
+							"key": "firstName",
+							"value": "Ali"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Members-Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/members/{{memberId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"members",
+						"{{memberId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Members-Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Alicia\",\r\n  \"lastName\": \"Smith\",\r\n  \"dateOfBirth\": \"1980-05-01\",\r\n  \"email\": \"alicia.smith@example.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/members/{{memberId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"members",
+						"{{memberId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Deleted (204)\", () => pm.expect(pm.response.code).to.satisfy(code => [200,204].includes(code)));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Alicia\",\r\n  \"lastName\": \"Smith\",\r\n  \"dateOfBirth\": \"1980-05-01\",\r\n  \"email\": \"alicia.smith@example.com\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{base_url}}/members/{{memberId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"members",
+						"{{memberId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2NTI2NzY0MSwiZXhwIjoxNzY1MjcxMjQxfQ.ysY5MCl7CDroYiuzQGh_cVPHsNaeSZLxeWzCMzvXtp19-hVG69R8m53edEvtrfVOXBC1A9LbkeVRMhp5PoL0Kg",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
